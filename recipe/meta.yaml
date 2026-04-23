@@ -1,35 +1,34 @@
-{% set name = "couchdb" %}
-{% set version = "3.3.1" %}
+{% set version = "3.4.2" %}
 
 package:
-  name: {{ name|lower }}
+  name: couchdb
   version: {{ version }}
 
 source:
-  - url: https://couchdb.neighbourhood.ie/downloads/{{ version }}/win/apache-couchdb-{{ version }}.msi  # [win]
-    sha256: c5e3953c334fa980b38d0ec67f5a882b9bb9382b3609c248d8b62d4b2dd39588  # [win]
-  - url: https://archive.apache.org/dist/couchdb/source/{{ version }}/apache-couchdb-{{ version }}.tar.gz  # [unix]
-    sha256: 9b89d7b54f7ef52b42bd51a6a0a2d3b1b06cce395df2c99d8f1f47f9355e2bee  # [unix]
+  url: https://archive.apache.org/dist/couchdb/source/{{ version }}/apache-couchdb-{{ version }}.tar.gz
+  sha256: d27ff2a13356000296a98ab884caf3d175927cf21727963ff90fab3a747544cf
 
 build:
-  number: 2
+  number: 0
+  # windows should also be compiled from source
+  # binary repackaging is not the preferred method at conda-forge
+  skip: true  # [win]
 
 requirements:
   build:
-    - {{ compiler('c') }}  # [unix]
+    - {{ compiler('c') }}    # [unix]
+    - {{ stdlib('c') }}      # [unix]
     - {{ compiler('cxx') }}  # [unix]
-    - make  # [unix]
+    - make                   # [unix]
+    # They git clone stuff... grrrrr.
+    - git                    # [unix]
   host:
-    - erlang 24.*  # [unix]
-    - openssl  # [unix]
-    - icu  # [unix]
-    - spidermonkey 91.*  # [unix]
-  run:
-    - openssl  # [unix]
-    - icu  # [unix]
-    - ncurses  # [unix]
-    - libzlib  # [unix]
-    - spidermonkey 91.*  # [unix]
+    - erlang        # [unix]
+    - openssl       # [unix]
+    - icu           # [unix]
+    - zlib          # [unix]
+    - ncurses       # [unix]
+    - spidermonkey  # [unix]
 
 test:
   commands:
